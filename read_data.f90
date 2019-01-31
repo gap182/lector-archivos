@@ -14,10 +14,10 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
     implicit none
 
     INTEGER, PARAMETER :: DP=SELECTED_REAL_KIND(P=15)
-    character(30) :: name
+    character(30) :: name, prueba
     character(100) :: renam 
     character(30) :: aux(row,col)
-    integer :: i,j,k
+    integer :: i,j,k, cont_int, cont_re, cont_char, realnum
     integer, intent(in) :: disc, col, intcol, charcol, row
     integer, intent(in) :: intpos(intcol), charpos(charcol) 
     real(dp), intent(out) :: a(row,col-intcol-charcol)
@@ -25,7 +25,10 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
     character(30), intent(out) :: c(row,charcol)
 
 
-    ! realnum=col-intcol-charcol
+    cont_int=1
+    cont_re=1
+    cont_char=1
+    realnum=col-intcol-charcol
     ! row = 0
 
     !the program will calculate the number of rows to read from the text file
@@ -63,52 +66,87 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
     ! do j=1,charcol
     !     read(*,*) charpos(j)
     ! end do
-    renam=trim("/home/gap182/Documents/Git/extras/")//trim(name)
+    ! renam=trim("/home/gap182/Documents/Git/extras/")//trim(name)
 
-    write(*,*) trim(renam), trim(renam ) 
+ 
 
 !     ! write(*,*) renam 
 !     !the program is going to star to save the data in the respective matrices
 ! write(*,*) renam, trim(name)
-        if (trim(renam)=='/home/gap182/Documents/Git/extras/jla_lcparams.txt') then 
-            write(*,*) 'si'
-        end if 
-!     open(307, file=trim(renam) , status="unknown", form="formatted")
+
+    ! prueba=name
+    ! write(*,*) prueba, 'yes'  
+
+    ! ! if (prueba .eq. 'yes') then 
+    ! !     write(*,*) 'si'
+    ! ! end if
+
+
+    !     if (name .eq. 'jla_lcparams.txt') then 
+    !         write(*,*) 'sipi'
+    !     end if 
+    open(307, file=name, status="unknown", form="formatted")
     
     
-! !     ! open(110, file='auxchar')
+!     ! open(110, file='auxchar')
 
 ! read(307,*)
-!         ! do i=1, disc
-        !     read(107,*)
-        ! end do
+        do i=1, disc
+            read(307,*)
+        end do
 
     
 
-        ! do i=1,row
-        !     read(107,*) (aux(i,j), j=1, col)
-        !         do j=1, col 
-        !             if (any(intpos==j)) then
-        !                 open(109, file='auxint')
-        !                 write(109,"(I5)") aux(i,j)
-        !                 close(108)
-        !                 open(109, file='auxint')
-        !                 read(109,"(I5)") b(i,j)
-        !             else if (any(charpos==j)) then
-        !                 c(i,j)=aux(i,j)
-        !             else
-        !                 open(108, file='auxrel')
-        !                 write(108,"(F15.8)") aux(i,j)
-        !                 close(108)
-        !                 open(108, file='auxrel')
-        !                 read(108,"(F15.8)") a(i,j)
-        !             end if 
-        !         end do
-        ! end do
+        do i=1,row
+            read(307,*) (aux(i,j), j=1, col)
+        end do
+
+        close(307)
+
+            do i=1, row
+                do j=1, col           
+                
+                    if (any(intpos==j)) then
+                        ! write(*,*) i,j
+                
+                        open(109, file='auxint')
+                        write(109,*) aux(i,j)
+                        close(109)
+                        open(109, file='auxint')
+                        read(109,"(I5)") b(i,cont_int)
+                        close(109)
+                        cont_int=cont_int+1
+                            if (cont_int == intcol) then
+                                cont_int=1
+                            end if
+                    ! else if (any(charpos==j)) then
+                    !     c(i,cont_char)=aux(i,j)
+                        
+                    !     cont_char=cont_char+1
+                        
+                    !         if (cont_char == charcol) then
+                    !             cont_char=1
+                    !         end if
+
+                    ! else
+                    !     open(108, file='auxrel')
+                    !     write(108,*) aux(i,j)
+                    !     close(108)
+                    !     open(108, file='auxrel')
+                    !     read(108,"(F15.8)") a(i,cont_re)
+                    !     close(108)
+                    !     cont_re=cont_re+1
+                    !         if (cont_re == realnum) then
+                    !             cont_re=1
+                    !         end if
+                    end if 
+                end do
+            end do
+
+            do i=1,row    
+            
+                write(100,*) (b(i,j), j=1, intcol)
+            
+        end do
         
-    
-
-
-
-
 end subroutine read_data
