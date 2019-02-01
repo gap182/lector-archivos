@@ -17,4 +17,5 @@ call read_data(name,21,740,a,2,b,1,c,1,intpos,charpos)
 
 
 
+
 end program prueba

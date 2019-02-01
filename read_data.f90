@@ -6,6 +6,8 @@
 !c is a (row,charcol) matrix to save the characters data of the file
 !disc is the number of initial rows to be discard of the file
 !dp is the parameter to define the precision of the real data
+!charcol is the number of character data (number of columns with character type data)
+!intcol is the number of integer data (number of colums with integer type data)
 !intpos is an array with the positions of the integer columns
 !charpos is an array with the positions of the character columns
 
@@ -21,9 +23,10 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
     integer, intent(in) :: disc, col, intcol, charcol, row
     integer, intent(in) :: intpos(intcol), charpos(charcol) 
     real(dp), intent(out) :: a(row,col-intcol-charcol)
-    integer, intent(out) :: b(row, intcol)
+    integer, intent(out), allocatable :: b(:,:)
     character(30), intent(out) :: c(row,charcol)
 
+    allocate(b(row,intcol))
 
     cont_int=1
     cont_re=1
@@ -99,6 +102,7 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
 
         do i=1,row
             read(307,*) (aux(i,j), j=1, col)
+            ! write(*,*) aux(i,18)
         end do
 
         close(307)
@@ -108,45 +112,53 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
                 
                     if (any(intpos==j)) then
                         ! write(*,*) i,j
-                
+                        
                         open(109, file='auxint')
+                        ! write(*,*) i, j, aux(i,j), 'esto es a'
                         write(109,*) aux(i,j)
+                        ! write(*,*) aux(i,j)
                         close(109)
                         open(109, file='auxint')
                         read(109,"(I5)") b(i,cont_int)
+
+                        ! write(*,*) i,j, cont_int, b(i,cont_int), 'esto es b'
+                        ! write(*,*) aux(1,4), 'esto es a'
                         close(109)
+                        ! write(*,*) b(1,1), 'esto es b'
                         cont_int=cont_int+1
-                            if (cont_int == intcol) then
+                            if (cont_int > intcol) then
                                 cont_int=1
                             end if
-                    ! else if (any(charpos==j)) then
-                    !     c(i,cont_char)=aux(i,j)
+                            
+                    ! write(*,*) b(i,cont_int), 'estoy aquí'
+                    else if (any(charpos==j)) then
+                        c(i,cont_char)=aux(i,j)
                         
-                    !     cont_char=cont_char+1
+                        cont_char=cont_char+1
                         
-                    !         if (cont_char == charcol) then
-                    !             cont_char=1
-                    !         end if
+                            if (cont_char > charcol) then
+                                cont_char=1
+                            end if
 
-                    ! else
-                    !     open(108, file='auxrel')
-                    !     write(108,*) aux(i,j)
-                    !     close(108)
-                    !     open(108, file='auxrel')
-                    !     read(108,"(F15.8)") a(i,cont_re)
-                    !     close(108)
-                    !     cont_re=cont_re+1
-                    !         if (cont_re == realnum) then
-                    !             cont_re=1
-                    !         end if
+                    else
+                        open(108, file='auxrel')
+                        write(108,*) aux(i,j)
+                        close(108)
+                        open(108, file='auxrel')
+                        read(108,"(F15.8)") a(i,cont_re)
+                        close(108)
+                        cont_re=cont_re+1
+                            if (cont_re > realnum) then
+                                cont_re=1
+                            end if
                     end if 
                 end do
             end do
 
-            do i=1,row    
+            ! do i=1,row    
             
-                write(100,*) (b(i,j), j=1, intcol)
-            
-        end do
+            !     write(100,*) (a(i,j), j=1, realnum)
+                
+            ! end do
         
 end subroutine read_data
