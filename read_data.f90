@@ -20,7 +20,7 @@ subroutine read_data(name,col,row, a,intcol,b,charcol,c,disc,intpos,charpos)
     INTEGER, PARAMETER :: DP=SELECTED_REAL_KIND(P=15)
     character(30) :: name
     character(30) :: aux(row,col)
-    integer :: i,j,k, cont_int, cont_re, cont_char, realnum
+    integer :: i,j, cont_int, cont_re, cont_char, realnum
     integer, intent(in) :: disc, col, intcol, charcol, row
     integer, intent(in) :: intpos(intcol), charpos(charcol) 
     real(dp), intent(out) :: a(row,col)
